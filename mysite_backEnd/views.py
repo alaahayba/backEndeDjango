@@ -6,7 +6,7 @@ from django.forms.models import model_to_dict
 from .validation import validateUserData,getUserData
 from django.conf import settings
 import os
-import jwt
+import jwt ,json
 
 # Create your views here.
 
@@ -26,8 +26,11 @@ def addUser(request):
             user.password=hashed_pwd
             # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['picture'])
             # path = default_storage.save(save_path, request.FILES['picture'])
-            user.save()
-            return JsonResponse(user.first_name,safe=False)
+            # user.save()
+            userData={"first_name":user.first_name,"last_name":user.last_name,
+            "countryCode":str(user.countryCode),"phone_number":user.phone_number,
+            "gender":user.gender,"birthDate":user.birthDate}
+            return JsonResponse(userData,safe=False)
 
     else:
         return JsonResponse({"req": "get"})
