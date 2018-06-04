@@ -62,3 +62,23 @@ def authToken(request):
 
         else :
             return JsonResponse(error,safe=False);
+
+####......................... get user profile by verfying token ...............................####
+
+def accessProfile(request):
+        if(request.method=='POST'):
+            phone_number='phone_number' in request.POST and request.POST['phone_number']
+            authToken='authToken' in request.POST and request.POST['authToken']
+            error={}
+            if not phone_number:
+                error.update({"phone_number":"blank"})
+
+            if not authToken:
+                error.update({"authToken":"blank"});
+
+            if error == {} :
+                decoded=jwt.decode(authToken, 'secret', algorithms=['HS256'])
+                return JsonResponse(decoded,safe=False);#payload data
+
+            else :
+                return JsonResponse(error,safe=False);

@@ -23,4 +23,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('addUser', csrf_exempt(views.addUser), name='addUser'),
     path('authToken', csrf_exempt(views.authToken), name='authToken'),
+    path('accessProfile', csrf_exempt(views.accessProfile), name='accessProfile'),
 ]
