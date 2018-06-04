@@ -4,7 +4,9 @@ from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password, check_password
 from django.forms.models import model_to_dict
 from .validation import validateUserData,getUserData
-
+from django.conf import settings
+import os
+import jwt
 
 # Create your views here.
 
@@ -20,13 +22,43 @@ def addUser(request):
         if(error!={}):
             return JsonResponse(error,safe=False)
         else:
-            #... save user data
+            hashed_pwd = make_password(user.password)
+            user.password=hashed_pwd
+            # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['picture'])
+            # path = default_storage.save(save_path, request.FILES['picture'])
             user.save()
-            return JsonResponse(user.first_name,safe=False )
-            # return JsonResponse(dumps(user),safe=False)
-
-        # hashed_pwd = make_password("plain_text")
-        # check_password("plain_text",hashed_pwd)  # returns True
+            return JsonResponse(user.first_name,safe=False)
 
     else:
         return JsonResponse({"req": "get"})
+
+###..........................................................................................###
+def authToken(request):
+    if(request.method=='POST'):
+        phone_number='phone_number' in request.POST and request.POST['phone_number']
+        password='password' in request.POST and request.POST['password']
+        error={}
+        if not phone_number:
+            error.update({"phone_number":"blank"})
+
+        if not password:
+            error.update({"password":"blank"});
+
+        if error == {} :
+            try:
+                user=User.objects.get(phone_number=phone_number)
+                matched=check_password(password,user.password)  # returns True
+                if matched :
+                    #.. return token
+                    user_data={"user_name":user.first_name,"user_email":user.email}
+                    encoded = jwt.encode(user_data, 'secret', algorithm='HS256')
+                    return JsonResponse({"phone_number":phone_number,"authorized":matched,"token":encoded.decode("utf-8") })
+                else:
+                    return JsonResponse({"authorization":"is not authorized"})
+
+            except User.DoesNotExist:
+                user = None
+                return JsonResponse({"error":"no user exist with that phone"})
+
+        else :
+            return JsonResponse(error,safe=False);

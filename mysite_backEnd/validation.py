@@ -15,7 +15,7 @@ def validateUserData(user):
     if(user.last_name in [False ,'']):
         error['last_name']=["{'error','blank'}"]
 
-    if(user.passwordin [False ,'']):
+    if(user.password in [False ,'']):
         error['password']=["{'error','blank'}"]
 
     if(user.gender in [False ,'']):
@@ -26,7 +26,7 @@ def validateUserData(user):
 
     if( user.birthDate and not re.match(DATE_REGEX, user.birthDate )):
         error['birth_date']=[{"error": "invaild format it must be yyyy-mm-dd" }];
-        
+
     if (user.email and not re.match(EMAIL_REGEX, user.email )):
             error['email']=[{"error": "Invalid email format" }];
 
