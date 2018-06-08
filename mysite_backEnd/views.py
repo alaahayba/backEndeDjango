@@ -7,6 +7,7 @@ from .validation import validateUserData,getUserData
 from django.conf import settings
 import os
 import jwt ,json
+from .uploadFiles import handle_uploaded_file as upload
 
 # Create your views here.
 
@@ -24,12 +25,13 @@ def addUser(request):
         else:
             hashed_pwd = make_password(user.password)
             user.password=hashed_pwd
-            # save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['picture'])
-            # path = default_storage.save(save_path, request.FILES['picture'])
-            # user.save()
+            imagePath='public/images/'+upload(request.FILES['picture'])
+            print (imagePath)
+            user.save()
             userData={"first_name":user.first_name,"last_name":user.last_name,
             "countryCode":str(user.countryCode),"phone_number":user.phone_number,
-            "gender":user.gender,"birthDate":user.birthDate}
+            "gender":user.gender,"birthDate":user.birthDate,
+            "imagePath":imagePath, "email":user.email}
             return JsonResponse(userData,safe=False)
 
     else:
