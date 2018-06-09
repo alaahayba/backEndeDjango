@@ -36,10 +36,13 @@ def validateUserData(user,image):
 
     if (user.email and not re.match(EMAIL_REGEX, user.email )):
             error['email']=[{"error": "Invalid email format" }];
-
-    res=validate_avatar(image)
-    if not res:
+    if image !=None:
+        res=validate_avatar(image)
+        if not res:
             error['Avatar']=[{'avatar':'invalid type'}];
+    else:
+        error['Avatar']=[{'avatar':'blank'}];
+
 
     return error
 

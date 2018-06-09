@@ -18,7 +18,8 @@ def addUser(request):
 
     if request.method == 'POST':
         user=getUserData(request.POST)
-        error=validateUserData(user,request.FILES['picture'])
+        avatar=request.FILES.get('picture')
+        error=validateUserData(user,avatar)
         if(error!={}):
             return JsonResponse(error,safe=False)
         else:
