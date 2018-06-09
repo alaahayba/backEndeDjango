@@ -10,16 +10,13 @@ import os, jwt ,json
 
 # Create your views here.
 
-def index(request):
-    return JsonResponse({"name": "Ahmed"})
-
-
 def addUser(request):
 
     if request.method == 'POST':
         user=getUserData(request.POST)
         avatar=request.FILES.get('picture')
         error=validateUserData(user,avatar)
+
         if(error!={}):
             return JsonResponse(error,safe=False)
         else:
@@ -29,7 +26,6 @@ def addUser(request):
                 user.save()
             except:
                 return JsonResponse({"error": "database error ,user exist,duplicate phone number or email"})
-
 
             userData={"first_name":user.first_name,"last_name":user.last_name,
             "countryCode":str(user.countryCode),"phone_number":user.phone_number,
