@@ -5,9 +5,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.forms.models import model_to_dict
 from .validation import validateUserData,getUserData
 from django.conf import settings
-import os
-import jwt ,json
-from .uploadFiles import handle_uploaded_file as upload
+import os, jwt ,json
+
 
 # Create your views here.
 
@@ -19,19 +18,16 @@ def addUser(request):
 
     if request.method == 'POST':
         user=getUserData(request.POST)
-        error=validateUserData(user)
+        error=validateUserData(user,request.FILES['picture'])
         if(error!={}):
             return JsonResponse(error,safe=False)
         else:
             hashed_pwd = make_password(user.password)
             user.password=hashed_pwd
-            imagePath='public/images/'+upload(request.FILES['picture'])
-            print (imagePath)
-            user.save()
+            # user.save()
             userData={"first_name":user.first_name,"last_name":user.last_name,
             "countryCode":str(user.countryCode),"phone_number":user.phone_number,
-            "gender":user.gender,"birthDate":user.birthDate,
-            "imagePath":imagePath, "email":user.email}
+            "gender":user.gender,"birthDate":user.birthDate, "email":user.email}
             return JsonResponse(userData,safe=False)
 
     else:

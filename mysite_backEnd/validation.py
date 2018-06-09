@@ -2,12 +2,19 @@ from .models import User
 import re
 
 
+from .uploadFiles import handle_uploaded_file as upload
 
 EMAIL_REGEX= '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$';
 DATE_REGEX= '^(19[5-9][0-9]|20[0-4][0-9]|2050)[-\/](0?[1-9]|1[0-2])[-\/](0?[1-9]|[12][0-9]|3[01])$';
 
+def validate_avatar(image):
+        imagePath='public/images/'+upload(image)
+        if imagePath=='public/images/'+'null':
+            return 0;
+        return 1;
 
-def validateUserData(user):
+
+def validateUserData(user,image):
     error={}
     if( user.first_name in [False ,'']):
         error['first_name']=["{'error','blank'}"]
@@ -29,6 +36,10 @@ def validateUserData(user):
 
     if (user.email and not re.match(EMAIL_REGEX, user.email )):
             error['email']=[{"error": "Invalid email format" }];
+
+    res=validate_avatar(image)
+    if not res:
+            error['Avatar']=[{'avatar':'invalid type'}];
 
     return error
 
