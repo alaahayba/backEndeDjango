@@ -25,7 +25,12 @@ def addUser(request):
         else:
             hashed_pwd = make_password(user.password)
             user.password=hashed_pwd
-            # user.save()
+            try:
+                user.save()
+            except:
+                return JsonResponse({"error": "database error ,user exist,duplicate phone number or email"})
+
+
             userData={"first_name":user.first_name,"last_name":user.last_name,
             "countryCode":str(user.countryCode),"phone_number":user.phone_number,
             "gender":user.gender,"birthDate":user.birthDate, "email":user.email}
